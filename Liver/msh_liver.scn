@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<Node name="root" dt="0.01" gravity="0 -1 0">
+	
+	<RequiredPlugin name="Sofa.Component.IO.Mesh"/> <!-- Needed to use components [MeshGmshLoader] -->
+  	<RequiredPlugin name="Sofa.Component.LinearSolver.Iterative"/> <!-- Needed to use components [CGLinearSolver] -->
+  	<RequiredPlugin name="Sofa.Component.Mapping.Linear"/> <!-- Needed to use components [IdentityMapping] -->
+  	<RequiredPlugin name="Sofa.Component.Mass"/> <!-- Needed to use components [MeshMatrixMass] -->
+  	<RequiredPlugin name="Sofa.Component.ODESolver.Backward"/> <!-- Needed to use components [EulerImplicitSolver] -->
+  	<RequiredPlugin name="Sofa.Component.SolidMechanics.FEM.Elastic"/> <!-- Needed to use components [TetrahedronFEMForceField] -->
+  	<RequiredPlugin name="Sofa.Component.StateContainer"/> <!-- Needed to use components [MechanicalObject] -->
+  	<RequiredPlugin name="Sofa.Component.Topology.Container.Dynamic"/> <!-- Needed to use components [TetrahedronSetTopologyContainer,TriangleSetTopologyContainer,TriangleSetTopologyModifier] -->
+  	<RequiredPlugin name="Sofa.Component.Topology.Mapping"/> <!-- Needed to use components [Tetra2TriangleTopologicalMapping] -->
+  	<RequiredPlugin name="Sofa.GL.Component.Rendering3D"/> <!-- Needed to use components [OglModel] -->
+	<RequiredPlugin name="Sofa.Component.Constraint.Projective"/> <!-- Needed to use components [FixedProjectiveConstraint] -->
+	<RequiredPlugin name="MultiThreading"/> <!-- Needed to use components [ParallelTetrahedronFEMForceField] -->
+
+	<DefaultAnimationLoop/>
+
+	<MeshGmshLoader name="meshLoaderCoarse" filename="liver.msh"/>
+	
+	<Node name="Liver">
+		<EulerImplicitSolver/>
+		<CGLinearSolver iterations="100" tolerance="1e-01" threshold="1e-01"/>
+
+		<TetrahedronSetTopologyContainer name="topo" src="@../meshLoaderCoarse"/>
+		<MechanicalObject template="Vec3d" name="MechanicalModel" showObject="false"/>	
+		< ParallelTetrahedronFEMForceField name="FEM" youngModulus="700" poissonRatio="0.45" method="large"/>
+		<FixedProjectiveConstraint  name="FixedProjectiveConstraint" indices="1 300 500" />
+		<MeshMatrixMass massDensity="0.0005" topology="@topo"/>
+
+		<Node name="ExtractSurface">	
+			<TriangleSetTopologyContainer name="Container"/>
+			<TriangleSetTopologyModifier name="Modifier"/>
+			<Tetra2TriangleTopologicalMapping input="@../topo" output="@Container"/>
+
+			<Node name="Visual">
+				<OglModel name="VisualModel" color="red"/>
+				<IdentityMapping name="Mapping" input="@.." output="@VisualModel"/>		
+			</Node>
+
+		</Node>
+	</Node>
+</Node>
