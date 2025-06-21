@@ -29,7 +29,7 @@
 	<CollisionResponse name="Response" response="PenalityContactForceField"/>
 
 	<MeshGmshLoader name="meshLoaderCoarse" filename="liver_simplify.msh"/>
-	<MeshOBJLoader name="meshLoaderFine" filename="mesh/liver-smooth.obj" />
+	<MeshOBJLoader name="meshLoaderFine" filename="liver_simplify.obj" />
   
 	<Node name="Liver">
 		<EulerImplicitSolver/>
@@ -41,7 +41,7 @@
 		<FixedProjectiveConstraint name="FixedProjectiveConstraint" indices="3 39 64"/>
 		<MeshMatrixMass massDensity="1" topology="@topo"/>
 		<Node name="Visual">
-			<OglModel name="VisualModel" src="@../../meshLoaderFine"/>
+			<OglModel name="VisualModel" src="@../../meshLoaderFine" color="red"/>
 			<BarycentricMapping name="VisualMapping" input="@../MechanicalModel" output="@VisualModel" />	
 		</Node>
 		<Node name="Collision">
