@@ -21,7 +21,7 @@
 	<Node name="SquareGravity">
 		<EulerImplicitSolver printLog="false"  rayleighStiffness="0.1" rayleighMass="0.1" />
 		<CGLinearSolver iterations="25" tolerance="1e-9" threshold="1e-9" />
-		<MeshGmshLoader name="meshLoader" filename="mesh/square3.msh" scale="10"/>
+		<MeshGmshLoader name="meshLoader" filename="square3.msh" scale="10"/>
 
 		<TriangleSetTopologyContainer  name="Container" src="@meshLoader"/>
 		<TriangleSetTopologyModifier/>
