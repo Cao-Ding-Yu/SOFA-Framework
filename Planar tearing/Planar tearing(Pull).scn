@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+
+<Node name="root" dt="0.01" gravity="0 -9.8 0">
+	<RequiredPlugin name="Sofa.Component.Collision.Geometry"/>
+	<RequiredPlugin name="Sofa.Component.Constraint.Projective"/>
+	<RequiredPlugin name="Sofa.Component.Engine.Select"/>
+	<RequiredPlugin name="Sofa.Component.IO.Mesh"/>
+	<RequiredPlugin name="Sofa.Component.LinearSolver.Iterative"/>
+	<RequiredPlugin name="Sofa.Component.Mapping.Linear"/>
+	<RequiredPlugin name="Sofa.Component.Mass"/>
+	<RequiredPlugin name="Sofa.Component.ODESolver.Backward"/>
+	<RequiredPlugin name="Sofa.Component.SolidMechanics.FEM.Elastic"/>
+	<RequiredPlugin name="Sofa.Component.SolidMechanics.Spring"/>
+	<RequiredPlugin name="Sofa.Component.StateContainer"/>
+	<RequiredPlugin name="Sofa.Component.Topology.Container.Dynamic"/>
+	<RequiredPlugin name="Sofa.GL.Component.Rendering3D"/>
+        <RequiredPlugin name="Tearing"/>
+
+	<DefaultAnimationLoop />
+    
+	<Node name="SquareGravity">
+		<EulerImplicitSolver printLog="false"  rayleighStiffness="0.1" rayleighMass="0.1" />
+		<CGLinearSolver iterations="25" tolerance="1e-9" threshold="1e-9" />
+		<MeshGmshLoader name="meshLoader" filename="mesh/square3.msh" scale="10"/>
+
+		<TriangleSetTopologyContainer  name="Container" src="@meshLoader"/>
+		<TriangleSetTopologyModifier/>
+		<TriangleSetGeometryAlgorithms template="Vec3d" />
+
+		<MechanicalObject name="obj"/>
+		<DiagonalMass massDensity="2.0" />
+
+		<BoxROI name="FixedSide" box="-0.1 9.9 0.1 10.1 10.1 -0.1"/> 
+		<FixedProjectiveConstraint indices="@FixedSide.indices" />
+
+		<TriangularFEMForceField youngModulus="300" poissonRatio="0.3" method="large" computePrincipalStress="true"/>
+		<TriangularBendingSprings stiffness="300"/>
+
+		<TearingEngine name="TearingEngine" input_position="@obj.position" stressThreshold="12.0"  step="30" nbFractureMax="1000" showFracturePath="0" fractureMaxLength="1.0"/>
+
+		<Node >
+			<OglModel name="Visual" color="red" />
+			<IdentityMapping input="@.." output="@Visual" />
+		</Node>
+	</Node>
+</Node>
