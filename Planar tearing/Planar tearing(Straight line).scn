@@ -36,7 +36,7 @@
 		<TriangularFEMForceField youngModulus="60" poissonRatio="0.3" method="large" computePrincipalStress="true"/>
 		<TriangularBendingSprings stiffness="300" damping="1.0" />
 
-        	<TearingScenarioEngine input_position="@obj.position" showTearableTriangle="0" showFracturePath="1" startVertexId="421" startDirection="1.0 0.0 0.0" startLength="3" />
+        	<TearingScenarioEngine input_position="@obj.position" showTearableTriangle="0" showFracturePath="0" startVertexId="421" startDirection="1.0 0.0 0.0" startLength="3" />
 
 		<Node >
 			<OglModel name="Visual" color="red" />
