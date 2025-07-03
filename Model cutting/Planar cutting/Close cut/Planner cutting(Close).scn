@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+<Node name="root" gravity="0 0 -50" dt="0.01">
+	<RequiredPlugin name="Sofa.Component.Collision.Geometry"/>
+	<RequiredPlugin name="Sofa.Component.Constraint.Projective"/>
+	<RequiredPlugin name="Sofa.Component.Engine.Select"/>
+	<RequiredPlugin name="Sofa.Component.IO.Mesh"/>
+	<RequiredPlugin name="Sofa.Component.LinearSolver.Iterative"/>
+	<RequiredPlugin name="Sofa.Component.Mapping.Linear"/>
+	<RequiredPlugin name="Sofa.Component.Mass"/>
+	<RequiredPlugin name="Sofa.Component.ODESolver.Backward"/>
+	<RequiredPlugin name="Sofa.Component.SolidMechanics.FEM.Elastic"/>
+	<RequiredPlugin name="Sofa.Component.SolidMechanics.Spring"/>
+	<RequiredPlugin name="Sofa.Component.StateContainer"/>
+	<RequiredPlugin name="Sofa.Component.Topology.Container.Dynamic"/>
+	<RequiredPlugin name="Sofa.Component.Topology.Mapping"/>
+	<RequiredPlugin name="Sofa.Component.Topology.Utility"/>
+	<RequiredPlugin name="Sofa.Component.Visual"/>
+	<RequiredPlugin name="Sofa.GL.Component.Rendering3D"/>
+
+	<DefaultAnimationLoop/>
+
+	<Node name="SquareGravity">
+		<EulerImplicitSolver printLog="false"  rayleighStiffness="0.1" rayleighMass="0.1" />
+		<CGLinearSolver iterations="100" tolerance="1.0e-9" threshold="1.0e-9" />
+		<MeshGmshLoader name="loader" filename="square3.msh" createSubelements="true"/>
+		
+		<TriangleSetTopologyContainer src="@loader" name="Triangle_topo" />
+		<TriangleSetTopologyModifier/>
+		<TriangleSetGeometryAlgorithms template="Vec3"/>
+
+		<MechanicalObject src="@loader" template="Vec3" scale3d="10 10 10" restScale="1" />
+		<DiagonalMass template="Vec3,Vec3" massDensity="1.5"/>
+
+		<BoxROI template="Vec3" name="box_roi1" box="0 9.5 -0.5 10 10.5 0.5"/>
+		<FixedProjectiveConstraint template="Vec3" indices="@box_roi1.indices"/>
+		<BoxROI template="Vec3" name="box_roi2" box="0 -0.5 -0.5 10 0.5 0.5"/>
+		<FixedProjectiveConstraint template="Vec3" indices="@box_roi2.indices"/>
+
+		<TriangularFEMForceField template="Vec3" method="large" poissonRatio="0.45" youngModulus="30000" />
+		<TriangularBendingSprings template="Vec3" stiffness="10000" damping="1" />
+		<TriangleCollisionModel selfCollision="true"/>
+
+		<Node >
+			<OglModel name="Visual" material="Default Diffuse 1 1 0 0 1 Ambient 1 0.2 0 0 1 Specular 0 1 0 0 1 Emissive 0 1 0 0 1 Shininess 0 45" />
+			<IdentityMapping input="@.." output="@Visual" />
+		</Node>
+
+		<TopologicalChangeProcessor listening="1" filename="Cutting path.txt" saveIndicesAtInit="true" printLog="false" draw="true" epsilonSnapPath="0.1" epsilonSnapBorder="0.5" />
+
+	</Node>
+</Node>
